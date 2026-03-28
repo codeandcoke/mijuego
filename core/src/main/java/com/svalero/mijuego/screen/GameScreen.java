@@ -1,30 +1,36 @@
 package com.svalero.mijuego.screen;
 
 import com.badlogic.gdx.Screen;
+import com.svalero.mijuego.manager.CameraManager;
+import com.svalero.mijuego.manager.LevelManager;
 import com.svalero.mijuego.manager.LogicManager;
 import com.svalero.mijuego.manager.RenderManager;
-import com.svalero.mijuego.manager.ResourceManager;
 
 /** Pantalla de juego */
 public class GameScreen implements Screen {
 
     private LogicManager logicManager;
     private RenderManager renderManager;
+    private LevelManager levelManager;
+    private CameraManager cameraManager;
 
     public GameScreen() {
         logicManager = new LogicManager();
-        renderManager = new RenderManager(logicManager);
+        levelManager = new LevelManager(logicManager);
+        levelManager.loadCurrentLevel();
+        renderManager = new RenderManager(logicManager, levelManager.batch);
+        cameraManager = new CameraManager(logicManager, levelManager);
     }
 
     @Override
     public void show() {
         logicManager.load();
-        renderManager.load();
     }
 
     @Override
     public void render(float delta) {
         logicManager.update(delta);
+        cameraManager.handleCamera();
         renderManager.drawFrame();
     }
 
